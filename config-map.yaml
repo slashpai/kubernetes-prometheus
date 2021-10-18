@@ -61,6 +61,26 @@ data:
         tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        
+      - job_name: example-app/0
+        honor_labels: false
+        kubernetes_sd_configs:
+        - role: endpoints
+          namespaces:
+            names:
+            - default
+        relabel_configs:
+        - source_labels:
+          - job
+          target_label: __tmp_prometheus_job_name
+        - action: keep
+          source_labels:
+          - __meta_kubernetes_service_label_example_app
+          regex: ""
+        - action: keep
+          source_labels:
+          - __meta_kubernetes_endpoint_port_name
+          regex: web
 
         kubernetes_sd_configs:
         - role: node
